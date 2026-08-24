@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mathe-Trainer</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="theme-simple">
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">+</div>
+        <div>
+          <h1>Mathe-Trainer</h1>
+          <p>Rechnen üben in ruhigen, kurzen Einheiten</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="setupScreen" class="screen" aria-labelledby="setupTitle">
+      <form id="setupForm" novalidate>
+        <div class="setup-layout">
+          <div class="setup-main">
+            <h2 id="setupTitle" class="section-title">Sitzung vorbereiten</h2>
+
+            <section class="setup-section" aria-labelledby="setTitle">
+              <h3 id="setTitle" class="section-title">Aufgaben</h3>
+              <div id="setOptions" class="option-grid"></div>
+            </section>
+
+            <section class="setup-section" aria-labelledby="themeTitle">
+              <h3 id="themeTitle" class="section-title">Thema</h3>
+              <div id="themeOptions" class="option-grid theme-grid"></div>
+            </section>
+          </div>
+
+          <aside class="setup-side" aria-labelledby="limitTitle">
+            <h3 id="limitTitle" class="side-title">Limit</h3>
+            <div class="limit-mode" role="radiogroup" aria-label="Limit">
+              <label>
+                <input type="radio" name="limitMode" value="time" checked>
+                <span>Zeitlimit</span>
+              </label>
+              <label>
+                <input type="radio" name="limitMode" value="tasks">
+                <span>Anzahl Aufgaben</span>
+              </label>
+            </div>
+
+            <div class="number-row">
+              <label id="limitValueLabel" for="limitValue">Minuten</label>
+              <div class="number-input-wrap">
+                <input id="limitValue" name="limitValue" type="number" min="1" step="1" value="5" inputmode="numeric" required>
+                <span id="limitUnit" class="number-unit">Min.</span>
+              </div>
+            </div>
+
+            <p id="setupError" class="setup-error" role="alert" aria-live="polite"></p>
+            <div class="button-row">
+              <button type="submit" class="btn btn-primary">Start</button>
+            </div>
+          </aside>
+        </div>
+      </form>
+    </section>
+
+    <section id="playScreen" class="screen play-screen hidden" aria-labelledby="exerciseTitle">
+      <h2 id="exerciseTitle" class="sr-only">Aufgabe</h2>
+      <div class="hud" aria-label="Aktueller Stand">
+        <div class="hud-item">
+          <span class="hud-label">Richtig</span>
+          <strong id="scoreText" class="hud-value">0 / 0</strong>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Serie</span>
+          <strong id="streakText" class="hud-value">0</strong>
+        </div>
+        <div id="limitInfo" class="hud-item limit-info hidden">
+          <span id="limitInfoLabel" class="hud-label">Zeit</span>
+          <strong id="limitInfoValue" class="hud-value">0:00</strong>
+        </div>
+        <button id="limitToggle" class="icon-btn" type="button" aria-label="Limit anzeigen" aria-pressed="false" title="Limit anzeigen">
+          <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3l18 18"></path>
+            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+            <path d="M9.9 4.2A10.6 10.6 0 0 1 12 4c5 0 8.5 4.1 10 8a13 13 0 0 1-3 4.6"></path>
+            <path d="M6.2 6.2A13.3 13.3 0 0 0 2 12c1.5 3.9 5 8 10 8a10.9 10.9 0 0 0 5-1.2"></path>
+          </svg>
+          <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3.5-8 10-8 10 8 10 8-3.5 8-10 8-10-8-10-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+        <button id="endSessionButton" class="btn btn-secondary btn-compact end-session-button" type="button">Sitzung beenden</button>
+      </div>
+
+      <div id="playPanel" class="play-panel">
+        <div class="theme-scene" aria-hidden="true">
+          <span class="scene-piece"></span>
+          <span class="scene-piece"></span>
+          <span class="scene-piece"></span>
+        </div>
+
+        <div class="task-area">
+          <div id="equationText" class="equation">1 + 1 = ?</div>
+          <form id="answerForm" class="answer-form" novalidate>
+            <label class="sr-only" for="answerInput">Antwort</label>
+            <input id="answerInput" class="answer-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-describedby="feedbackText">
+            <button id="answerButton" type="submit" class="btn btn-primary">Prüfen</button>
+          </form>
+        </div>
+
+        <div id="feedbackText" class="feedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="resultsScreen" class="screen results-screen hidden" aria-labelledby="resultsTitle">
+      <button id="replayButton" type="button" class="btn btn-primary top-replay">Nochmal</button>
+
+      <div class="results-grid">
+        <section class="result-block" aria-labelledby="resultsTitle">
+          <h2 id="resultsTitle">Ergebnis</h2>
+          <div id="stars" class="star-row" aria-label="0 Sterne"></div>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span>Richtige Antworten</span>
+              <strong id="childScore">0 / 0</strong>
+            </div>
+            <div class="summary-item">
+              <span>Längste Serie</span>
+              <strong id="childBestStreak">0</strong>
+            </div>
+            <div class="summary-item">
+              <span>Durchschnitt</span>
+              <strong id="childAverage">0,0 s</strong>
+            </div>
+            <div class="summary-item">
+              <span>Quote</span>
+              <strong id="childRate">0%</strong>
+            </div>
+          </div>
+          <div class="button-row">
+            <button id="changeSettingsButton" type="button" class="btn btn-secondary">Einstellungen ändern</button>
+          </div>
+        </section>
+
+        <section class="result-block" aria-labelledby="parentTitle">
+          <h3 id="parentTitle">Details für Eltern</h3>
+          <div class="details-list">
+            <div class="detail-pill">
+              <span>Gesamtzeit</span>
+              <strong id="parentTotalTime">0 s</strong>
+            </div>
+            <div class="detail-pill">
+              <span>Durchschnitt</span>
+              <strong id="parentAverage">0,0 s</strong>
+            </div>
+            <div class="detail-pill">
+              <span>Endstand</span>
+              <strong id="parentScore">0 / 0</strong>
+            </div>
+            <div class="detail-pill">
+              <span>Längste Serie</span>
+              <strong id="parentBestStreak">0</strong>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Aufgabe</th>
+                  <th>Antwort</th>
+                  <th>Richtig</th>
+                  <th>Ergebnis</th>
+                  <th>Zeit</th>
+                </tr>
+              </thead>
+              <tbody id="detailRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

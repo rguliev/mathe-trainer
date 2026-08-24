@@ -1,0 +1,7 @@
+# Local Codex workspace metadata
+.agents/
+.codex/
+
+# Source conversation and unused asset backups
+extracted_chat.md
+*.bkp
