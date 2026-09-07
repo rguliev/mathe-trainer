@@ -89,6 +89,7 @@ Rules:
 
 * `c` must stay within the selected set limit: 10, 20, or 100.
 * No generated answer should be negative.
+* Addition sets up to 20 select from `assets/js/addition-triplets.js`: all sorted triplets `0 <= a <= b`, `a + b = c <= 20`, with each fact listed once. Filter by the selected limit and crossing rule first. Triplets containing 0, 1, or 10 have relative weight 1/5; all others have weight 1. For crossing-10 sets up to 20, multiply the weight by 0.375 when either addend is 9 (20% total probability before repetition checks). Randomly swap the addends after selecting a triplet, then choose the task template and apply the usual repetition and reduced-answer checks.
 * For “mit Zehnerüberschreitung”, `(a % 10) + (b % 10) > 10`.
 * For “ohne Zehnerüberschreitung”, `(a % 10) + (b % 10) < 10`.
 * Tasks with reduced answers (`0`, `1`, or multiples of `10`) should appear at most about once per 20 tasks.

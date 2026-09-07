@@ -705,7 +705,10 @@
 
       function generateAdditionTask(set) {
         const candidates = getAdditionCandidates(set);
-        const base = randomItem(candidates);
+        let base = randomItem(candidates);
+        if (set.limit <= 20 && Math.random() < 0.5) {
+          base = { a: base.b, b: base.a, c: base.c };
+        }
         const template = randomItem(ADDITION_TEMPLATES);
         const display = template.render(base);
         const answer = template.answer(base);
@@ -737,6 +740,32 @@
 
       function buildAdditionCandidates(limit, carry) {
         const candidates = [];
+        // Up to 20, use each canonical fact once (a <= b); addends are swapped later.
+        if (limit <= 20) {
+          for (const [a, b, c] of ADDITION_TRIPLETS) {
+            const onesSum = (a % 10) + (b % 10);
+            // Match the selected set. Exactly 10 in the ones sum belongs to neither
+            // crossing mode; "any" accepts it.
+            if (c > limit || (carry === "with" && onesSum <= 10) ||
+                (carry === "without" && onesSum >= 10)) {
+              continue;
+            }
+            // A fact containing 0, 1, or 10 gets one fifth of the normal weight.
+            let weight = [a, b, c].some((n) => n === 0 || n === 1 || n === 10) ? 1 : 5;
+            if (carry === "with") {
+              // Scale all weights by 8, then apply 3/8 to facts containing 9.
+              // This keeps copy counts integral and lowers their share from 40%
+              // to 20% in the crossing-10 pool, before repetition checks.
+              weight *= a === 9 || b === 9 ? 3 : 8;
+            }
+            // Uniform random selection from repeated entries implements the weights.
+            for (let copy = 0; copy < weight; copy += 1) {
+              candidates.push({ a, b, c });
+            }
+          }
+          return candidates;
+        }
+        // Larger sets enumerate positive ordered pairs with equal weight.
         for (let a = 1; a <= limit; a += 1) {
           for (let b = 1; b <= limit; b += 1) {
             const c = a + b;
@@ -744,6 +773,7 @@
               continue;
             }
 
+            // Apply the same strict crossing rules as the triplet-based sets.
             const onesSum = (a % 10) + (b % 10);
             if (carry === "with" && onesSum <= 10) {
               continue;

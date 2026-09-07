@@ -9,6 +9,7 @@ Die App besteht aus statischen Dateien ohne Build-Schritt:
 - `index.html`
 - `assets/css/styles.css`
 - `assets/js/app.js`
+- `assets/js/addition-triplets.js` — sortierte Additionspaare mit Summe bis 20
 - `assets/fonts/`
 - `assets/images/`
 
